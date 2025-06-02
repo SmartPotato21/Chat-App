@@ -11,6 +11,32 @@
             box-sizing: border-box;
         }
 
+        .add-friend-popup {
+            width: 400px;
+            height: 300px;
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 15px;  
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 0 30px 60px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            display: none; /* Initially hidden */
+        }
+
+        .add-friend-popup h2 {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 40px;
+            text-shadow: none;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -45,10 +71,22 @@
         }
 
         .friends-section {
-            flex: 1;
+            flex: 3;
             padding: 30px 20px;
             border-bottom: 1px solid #e9ecef;
+            overflow: auto;
         }
+        .friend-add-section {
+            flex: 0.3;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        
+
 
         .profile-section {
             flex: 1;
@@ -98,12 +136,19 @@
             background: #f8f9fa;
         }
 
+        
+
         .section-title {
             font-size: 18px;
             font-weight: 700;
             color: #333;
             margin-bottom: 20px;
             text-align: center;
+        }
+
+        .friend-add-section .section-title {
+            margin-bottom: 0;
+            font-size: 14px;
         }
 
         .friends-list {
@@ -346,6 +391,14 @@
                 border-bottom: none;
                 border-right: 1px solid #e9ecef;
             }
+            .friend-add-section {
+                padding: 10px;
+                flex-shrink: 0;
+                height: 60px;
+                background-color: #f4f4f4;
+                border-top: 1px solid #ccc;
+            }
+             
 
             .main-chat {
                 grid-column: 1;
@@ -369,30 +422,57 @@
                             <div class="friend-status">Online</div>
                         </div>
                     </div>
-                    <div class="friend-item" onclick="selectFriend('Bob Smith')">
-                        <div class="friend-avatar">BS</div>
+                     <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
+                        <div class="friend-avatar">AJ</div>
                         <div class="friend-info">
-                            <div class="friend-name-item">Bob Smith</div>
-                            <div class="friend-status">Away</div>
-                        </div>
-                    </div>
-                    <div class="friend-item" onclick="selectFriend('Carol Davis')">
-                        <div class="friend-avatar">CD</div>
-                        <div class="friend-info">
-                            <div class="friend-name-item">Carol Davis</div>
-                            <div class="friend-status">Offline</div>
-                        </div>
-                    </div>
-                    <div class="friend-item" onclick="selectFriend('David Wilson')">
-                        <div class="friend-avatar">DW</div>
-                        <div class="friend-info">
-                            <div class="friend-name-item">David Wilson</div>
+                            <div class="friend-name-item">Alice Johnson</div>
                             <div class="friend-status">Online</div>
                         </div>
                     </div>
+                     <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
+                        <div class="friend-avatar">AJ</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">Alice Johnson</div>
+                            <div class="friend-status">Online</div>
+                        </div>
+                    </div>
+                     <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
+                        <div class="friend-avatar">AJ</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">Alice Johnson</div>
+                            <div class="friend-status">Online</div>
+                        </div>
+                    </div>
+                     <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
+                        <div class="friend-avatar">AJ</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">Alice Johnson</div>
+                            <div class="friend-status">Online</div>
+                        </div>
+                    </div>
+                     <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
+                        <div class="friend-avatar">AJ</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">Alice Johnson</div>
+                            <div class="friend-status">Online</div>
+                        </div>
+                    </div>
+                    
+                    
                 </div>
+                            
             </div>
+            
+            <div class="friend-add-section">
+                <button class="profile-btn primary" type="submit" onclick="togglePopup()">Add Friend</button>
+                
+                
+            </div>
+            
+            
 
+        
+            
             <!-- Profile Section -->
             <div class="profile-section">
                 <h3 class="section-title">PROFILE</h3>
@@ -410,6 +490,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Main Chat Area -->
         <div class="main-chat">
@@ -474,4 +555,24 @@
                 </div>
             </div>
         </div>
+        
+
     </div>
+    <div class="add-friend-popup" id="popup">
+    <h2>Add Friend</h2>
+</div>
+
+<script>
+    let popup = document.getElementById('popup');
+    function togglePopup() {
+        if (popup.style.display === 'block') {
+            popup.style.display = 'none';
+        } else {
+            popup.style.display = 'block';
+        }
+        
+    }
+</script>
+
+</body>
+    

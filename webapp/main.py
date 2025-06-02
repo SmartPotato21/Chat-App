@@ -89,6 +89,8 @@ def chat_page():
     if request.method == 'POST':
         if 'logout_select' in request.form:
             return redirect('/logout')
+        
+            
 
     return render_template('chat.html', username = current_user.username)
 
