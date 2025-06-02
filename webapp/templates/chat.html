@@ -397,14 +397,15 @@
             <div class="profile-section">
                 <h3 class="section-title">PROFILE</h3>
                 <div class="profile-card">
-                    <div class="profile-avatar">JD</div>
-                    <div class="profile-name">John Doe</div>
+                    <div class="profile-avatar">PFP</div>
+                    <div class="profile-name">{{ username }}</div>
                     <div class="profile-status">Online</div>
                     <div class="profile-actions">
-                        <button class="profile-btn primary" onclick="editProfile()">Edit Profile</button>
-                        <button class="profile-btn secondary" onclick="showSettings()">Settings</button>
-                        <button class="profile-btn secondary" onclick="showSettings()">Log out</button>
-
+                        <form method="post">
+                            <button class="profile-btn primary" onclick="editProfile()">Edit Profile</button>
+                            <button class="profile-btn secondary" onclick="showSettings()">Settings</button>
+                            <button class="profile-btn secondary" name= "logout_select" onclick="showSettings()">Log out</button>
+                        </form>
                     </div>
                 </div>
             </div>
