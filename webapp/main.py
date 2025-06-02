@@ -50,9 +50,11 @@ def login_page():
             
             username = request.form.get("username")
             password = request.form.get("password")
+            confirmpassword = request.form.get("confirm-password")
             
             
-            
+
+                    
             found_user = User.query.filter_by(username=username).first()
             if not found_user:
                 return "User not found"

@@ -219,15 +219,30 @@
                             </div>
                             <div class="form-group">
                                 <label for="confirmPassword">Confirm Password</label>
-                                <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                                <input type="password" id="confirmPassword" name="confirm-password" required minlength="6">
                             </div>
-                            
-                                <button type="submit" class="btn" name= "register_submit">Sign Up</button>
+                            <span id="error" style="color: red;"></span><br>
+                                <button type="submit" class="btn" name= "register_submit" onclick="checkpasswords()">Sign Up</button>
                         </form>    
 
                 </div>
             {% endif %}
         </div>
     </div>
+    <script>
+  
+            document.getElementById('signupForm').addEventListener('submit', function(event) {
+
+            let password1 = document.getElementById('signupPassword').value;
+            let password2 = document.getElementById('confirmPassword').value;
+            let error = document.getElementById('error');
+            if(password1 !== password2)
+            {
+                event.preventDefault();
+                error.textContent = "Passwords dont match";
+            }
+        });
+    </script>    
+
 </body>
 </html>
