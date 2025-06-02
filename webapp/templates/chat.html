@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px;
+            height: 80vh;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            grid-column: 1;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .friends-section {
+            flex: 1;
+            padding: 30px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .profile-section {
+            flex: 1;
+            padding: 30px 20px;
+        }
+
+        .main-chat {
+            grid-column: 2;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .friend-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .chat-history {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .chat-input-area {
+            padding: 20px 30px;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .friends-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .friend-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        .friend-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .friend-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name-item {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .friend-status {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .profile-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .profile-status {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .profile-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .profile-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .message.own {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            background: #f8f9fa;
+            margin-bottom: 5px;
+        }
+
+        .message.own .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+        }
+
+        .message.own .message-time {
+            text-align: left;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .no-chat-selected {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6c757d;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                height: 90vh;
+            }
+
+            .sidebar {
+                grid-column: 1;
+                grid-row: 1;
+                flex-direction: row;
+                height: auto;
+            }
+
+            .friends-section, .profile-section {
+                flex: 1;
+                border-bottom: none;
+                border-right: 1px solid #e9ecef;
+            }
+
+            .main-chat {
+                grid-column: 1;
+                grid-row: 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Friends Section -->
+            <div class="friends-section">
+                <h3 class="section-title">FRIENDS LIST</h3>
+                <div class="friends-list">
+                    <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
+                        <div class="friend-avatar">AJ</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">Alice Johnson</div>
+                            <div class="friend-status">Online</div>
+                        </div>
+                    </div>
+                    <div class="friend-item" onclick="selectFriend('Bob Smith')">
+                        <div class="friend-avatar">BS</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">Bob Smith</div>
+                            <div class="friend-status">Away</div>
+                        </div>
+                    </div>
+                    <div class="friend-item" onclick="selectFriend('Carol Davis')">
+                        <div class="friend-avatar">CD</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">Carol Davis</div>
+                            <div class="friend-status">Offline</div>
+                        </div>
+                    </div>
+                    <div class="friend-item" onclick="selectFriend('David Wilson')">
+                        <div class="friend-avatar">DW</div>
+                        <div class="friend-info">
+                            <div class="friend-name-item">David Wilson</div>
+                            <div class="friend-status">Online</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <h3 class="section-title">PROFILE</h3>
+                <div class="profile-card">
+                    <div class="profile-avatar">JD</div>
+                    <div class="profile-name">John Doe</div>
+                    <div class="profile-status">Online</div>
+                    <div class="profile-actions">
+                        <button class="profile-btn primary" onclick="editProfile()">Edit Profile</button>
+                        <button class="profile-btn secondary" onclick="showSettings()">Settings</button>
+                        <button class="profile-btn secondary" onclick="showSettings()">Log out</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-chat">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="friend-avatar">AJ</div>
+                <div>
+                    <div class="friend-name">Alice Johnson</div>
+                    <div class="friend-status">Online</div>
+                </div>
+                <div class="status-indicator"></div>
+            </div>
+
+            <!-- Chat History -->
+            <div class="chat-history">
+                <div class="message">
+                    <div class="message-avatar">AJ</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Hey! How are you doing today?
+                        </div>
+                        <div class="message-time">2:30 PM</div>
+                    </div>
+                </div>
+
+                <div class="message own">
+                    <div class="message-avatar">JD</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            I'm doing great! Just working on some new projects. How about you?
+                        </div>
+                        <div class="message-time">2:32 PM</div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">AJ</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            That sounds exciting! I'd love to hear more about what you're working on.
+                        </div>
+                        <div class="message-time">2:35 PM</div>
+                    </div>
+                </div>
+
+                <div class="message own">
+                    <div class="message-avatar">JD</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            It's a new chat application with a modern design. I think you'd really like the interface!
+                        </div>
+                        <div class="message-time">2:38 PM</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-area">
+                <div class="chat-input">
+                    <input type="text" placeholder="Type your message..." id="messageInput" onkeypress="handleEnterKey(event)">
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
