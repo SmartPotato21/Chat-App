@@ -10,3 +10,7 @@ class User(UserMixin,db.Model):
     username = db.Column(db.String, unique=True)
     password = db.Column(db.String, unique=False)
 
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer)
+    text = db.Column(db.String(32), nullable=False)
