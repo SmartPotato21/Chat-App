@@ -1,7 +1,9 @@
-from webapp import app
+import sys
+import os
 
-if __name__ == "__main__":
-    app.run()
+# Adjust this path to match your actual username and directory
+project_home = '/home/smartpotato86/CHAT-APP'
+if project_home not in sys.path:
+    sys.path.insert(0, project_home)
 
-# Gunicorn looks for a WSGI `app` callable
-application = app
+from webapp import app as application  # the `app` is defined in __init__.py
