@@ -1,411 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/static/style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Application</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        .add-friend-popup {
-            width: 400px;
-            height: 300px;
-            background: white;
-            border: 3px solid #667eea;
-            border-radius: 15px;  
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 0 30px 60px;
-            text-align: center;
-            color: #333;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-            z-index: 9999;
-            display: none; /* Initially hidden */
-        }
-
-        .add-friend-popup h2 {
-            color: #667eea;
-            font-size: 24px;
-            font-weight: 700;
-            margin-top: 40px;
-            text-shadow: none;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chat-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 1200px;
-            height: 80vh;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 0;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            grid-column: 1;
-            grid-row: 1 / 3;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #e9ecef;
-        }
-
-        .friends-section {
-            flex: 3;
-            padding: 30px 20px;
-            border-bottom: 1px solid #e9ecef;
-            overflow: auto;
-        }
-        .friend-add-section {
-            flex: 0.3;
-            padding: 15px 20px;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        
-
-
-        .profile-section {
-            flex: 1;
-            padding: 30px 20px;
-        }
-
-        .main-chat {
-            grid-column: 2;
-            grid-row: 1 / 3;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .friend-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            background: #28a745;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .chat-history {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            background: white;
-        }
-
-        .chat-input-area {
-            padding: 20px 30px;
-            border-top: 1px solid #e9ecef;
-            background: #f8f9fa;
-        }
-
-        
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .friend-add-section .section-title {
-            margin-bottom: 0;
-            font-size: 14px;
-        }
-
-        .friends-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .friend-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        .friend-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateX(5px);
-        }
-
-        .friend-item.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .friend-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .friend-info {
-            flex: 1;
-        }
-
-        .friend-name-item {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-
-        .friend-status {
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        .profile-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 32px;
-            margin: 0 auto 20px;
-        }
-
-        .profile-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .profile-status {
-            font-size: 14px;
-            color: #6c757d;
-            margin-bottom: 20px;
-        }
-
-        .profile-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .profile-btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .profile-btn.primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .profile-btn.secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .profile-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .message {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .message.own {
-            flex-direction: row-reverse;
-        }
-
-        .message-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .message-content {
-            max-width: 70%;
-        }
-
-        .message-bubble {
-            padding: 12px 16px;
-            border-radius: 18px;
-            background: #f8f9fa;
-            margin-bottom: 5px;
-        }
-
-        .message.own .message-bubble {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .message-time {
-            font-size: 12px;
-            color: #6c757d;
-            text-align: right;
-        }
-
-        .message.own .message-time {
-            text-align: left;
-        }
-
-        .chat-input {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .chat-input input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e9ecef;
-            border-radius: 25px;
-            font-size: 16px;
-            background: white;
-            transition: all 0.3s ease;
-        }
-
-        .chat-input input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .send-btn {
-            padding: 15px 25px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .no-chat-selected {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #6c757d;
-            font-size: 18px;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .chat-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr;
-                height: 90vh;
-            }
-
-            .sidebar {
-                grid-column: 1;
-                grid-row: 1;
-                flex-direction: row;
-                height: auto;
-            }
-
-            .friends-section, .profile-section {
-                flex: 1;
-                border-bottom: none;
-                border-right: 1px solid #e9ecef;
-            }
-            .friend-add-section {
-                padding: 10px;
-                flex-shrink: 0;
-                height: 60px;
-                background-color: #f4f4f4;
-                border-top: 1px solid #ccc;
-            }
-             
-
-            .main-chat {
-                grid-column: 1;
-                grid-row: 2;
-            }
-        }
-    </style>
+    
 </head>
 <body>
     <div class="chat-container">
@@ -416,35 +16,17 @@
                 <h3 class="section-title">FRIENDS LIST</h3>
                 <div class="friends-list">
 
-                    
-                    <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
+                    {% for friend in friend_list %}
+                    <div class="friend-item" onclick="openChat(this,'{{ friend.username }}')">
                         <div class="friend-avatar">F</div>
                         <div class="friend-info">
-                            <div class="friend-name-item">Friend</div>
+                            
+                            <div class="friend-name-item">{{ friend.username }}</div>
                             <div class="friend-status">Online</div>
                         </div>
                     </div>
-                     <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
-                        <div class="friend-avatar">F</div>
-                        <div class="friend-info">
-                            <div class="friend-name-item">Friend</div>
-                            <div class="friend-status">Online</div>
-                        </div>
-                    </div>
-                    <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
-                        <div class="friend-avatar">F</div>
-                        <div class="friend-info">
-                            <div class="friend-name-item">Friend</div>
-                            <div class="friend-status">Online</div>
-                        </div>
-                    </div>
-                    <div class="friend-item active" onclick="selectFriend('Alice Johnson')">
-                        <div class="friend-avatar">F</div>
-                        <div class="friend-info">
-                            <div class="friend-name-item">Friend</div>
-                            <div class="friend-status">Online</div>
-                        </div>
-                    </div>
+                    {% endfor %}
+                     
                 </div>
                             
             </div>
@@ -492,15 +74,17 @@
 
             <!-- Chat History -->
             <div class="chat-history">
-                <div class="message">
-                    <div class="message-avatar">F</div>
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            Message incoming
+                {% for message in messages %}
+                    <div class="message">
+                        <div class="message-avatar">F</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                {{ message.text }}
+                            </div>
+                            <div class="message-time">2:30 PM</div>
                         </div>
-                        <div class="message-time">2:30 PM</div>
                     </div>
-                </div>
+                {% endfor %}
 
                 <div class="message own">
                     <div class="message-avatar">you</div>
@@ -517,31 +101,244 @@
             </div>
 
             <!-- Chat Input -->
-            <div class="chat-input-area">
-                <div class="chat-input">
-                    <input type="text" placeholder="Type your message..." id="messageInput" onkeypress="handleEnterKey(event)">
-                    <button class="send-btn" onclick="sendMessage()">Send</button>
+            
+                <div class="chat-input-area">
+                    <div class="chat-input">
+                        <input type="text" placeholder="Type your message..." id="messageInput" name="message">
+                        <button class="send-btn" name="message-sent" onclick='submitMessage()'>Send</button>
+                    </div>
                 </div>
-            </div>
+            
         </div>
         
 
     </div>
     <div class="add-friend-popup" id="popup">
-    <h2>Add Friend</h2>
+        <h2>Add Friend</h2>
+        <div class="popup-input">
+            <input type="text" id="friendUsername" placeholder="Enter friend's username" required>
+            <button type="button" onclick="addFriend()">Add Friend</button>
+            <div id="statusMessage"></div>
+        </div>
+    </div>
+
+<!--        <div class="friend-request-popup">
+            <h2>Friend Request</h2>
+            <div class="popup-buttons">
+
+                <button class="accept-btn" >Accept</button>
+                <button class="block-btn" >Block</button>
+            </div>
+        </div>
+  
+
+    </div>
+     //-->
 </div>
 
-<script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+    var socket = io();
+    socket.on('connect', () => {
+        console.log('Connected to the server');
+    });
+    function addFriend() {
+            const friendUsername = document.getElementById('friendUsername').value.trim();
+            
+            if (!friendUsername) {
+                return;
+            }
+
+            // Use fetch to submit form data without page refresh
+            const formData = new FormData();
+            formData.append('add-friend', 'true');
+            formData.append('friend-username', friendUsername);
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.friend) {
+                        //addFriendToList(data.friend);
+                    }
+                    togglePopup(); // Close popup on success
+                } else {
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                 togglePopup();
+            });
+
+            // Clear the input
+            document.getElementById('friendUsername').value = '';
+            // Close the popup
+        }
+    
+    socket.on('message_sent', function(data) {
+        console.log("Friend sent message:", data.text);
+
+        const chatHistory = document.querySelector('.chat-history');
+        
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message `+ (data.own ? 'own' : '');
+        messageDiv.innerHTML = `
+            <div class="message-avatar">${(data.own ? 'You' : 'F')}</div>
+            <div class="message-content">
+                <div class="message-bubble">${data.text}</div>
+                <div class="message-time">Now</div>
+            </div>
+        `;
+        chatHistory.appendChild(messageDiv);
+
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+
+        
+    });
+
+
+    socket.on('friend_accepted', function(data) {
+        console.log("Friend accepted handler called with:", data);
+        addFriendToList(data.friend);
+    });
+    socket.on("disconnect", () => {
+        console.log(socket.id); // undefined
+    });
+
+    function addFriendToList(friend) {
+        const friendsList = document.querySelector('.friends-list');
+
+        // Make sure the container exists
+        if (!friendsList) {
+            console.error('Could not find .friends-list in DOM');
+            return;
+        }
+
+        // Create the new friend element
+        const friendElement = document.createElement('div');
+        friendElement.className = 'friend-item';
+         friendElement.setAttribute('onclick', `openChat(this, '${friend.username}')`);
+        friendElement.innerHTML = `
+            <div class="friend-avatar">F</div>
+            <div class="friend-info">
+                <div class="friend-name-item">${friend.username}</div>
+                <div class="friend-status">Online</div>
+            </div>
+        `;
+
+        // Add it to the friends list
+        friendsList.appendChild(friendElement);
+    }
+
+    // Popup logic
     let popup = document.getElementById('popup');
     function togglePopup() {
-        if (popup.style.display === 'block') {
-            popup.style.display = 'none';
-        } else {
-            popup.style.display = 'block';
-        }
-        
-    }
-</script>
+        if (!popup) return;
 
+        popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    }
+    // Function to open chat with a friend
+    function openChat(element, friend) {
+        // Remove 'active' from all
+        document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
+
+        // Add 'active' to clicked element
+        element.classList.add('active');
+
+        console.log(`Opening chat with ${friend}`);
+
+        const chatHeader = document.querySelector('.chat-header');
+        const chatHistory = document.querySelector('.chat-history');
+        const chatInputArea = document.querySelector('.chat-input-area');
+
+        if (chatHeader && chatHistory && chatInputArea) {
+            chatHeader.querySelector('.friend-name').textContent = friend;
+            chatHistory.innerHTML = ''; // Reset chat history
+            chatHeader.style.display = 'block';
+            chatHistory.style.display = 'block';
+            chatInputArea.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('friend', friend);
+
+            fetch('/get_messages', {
+                method: 'POST',
+                body: formData
+
+
+                
+            })
+            .then(response => response.json())
+            .then(data => {
+                
+                console.log('Messages fetched:', data);
+
+                if (data.success) {
+                    chatHistory.innerHTML = ''; // Clear loading
+
+                    data.messages.forEach(msg => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `message ${msg.is_own ? 'own' : ''}`;
+                        messageDiv.innerHTML = `
+                            <div class="message-avatar">${msg.is_own ? 'You' : 'F'}</div>
+                            <div class="message-content">
+                                <div class="message-bubble">${msg.text}</div>
+                                <div class="message-time">Now</div>
+                            </div>
+                        `;
+                        chatHistory.appendChild(messageDiv);
+
+                        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                    });
+
+                } else {
+                    chatHistory.innerHTML = `<div class="error">Failed to load messages.</div>`;
+                }
+            })
+
+        } else {
+            console.error('Chat elements not found in the DOM');
+        }
+    }
+    function submitMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+        const receiver = document.querySelector('.chat-header .friend-name').textContent.trim();
+        if (message) {
+            const formData = new FormData();
+            formData.append('message-submit', 'true');
+            formData.append('message', message);
+            formData.append('receiver', receiver);
+
+            console.log('Submitting message:', message, 'to', receiver);
+            fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+            })
+            .then(response => { 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();  // read once and return the parsed JSON
+            })
+            .then(data => {
+                console.log('Message sent:', data);  // use the parsed JSON here
+                messageInput.value = ""; // Clear input on success
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    }
+    
+
+    </script>
 </body>
     
