@@ -23,6 +23,8 @@ def dropAll(password):
             
 def createAll():
     with app.app_context():
+        from webapp.db.models import User, Message, Friend
+
         db.create_all()
         
 def User_remove(username):
@@ -39,25 +41,26 @@ def Message_dropAll():
         # If you want to also remove it from SQLAlchemy's metadata:
         db.metadata.remove(Message.__table__)
 
-def Message_addMessage(receiver_id, sender_id, message):
+def Message_addMessage(receiver_id, sender_id, message, sender_name):
     with app.app_context():
         new_message = Message(sender_id=sender_id, text=message, receiver_id=receiver_id)
         db.session.add(new_message)
         db.session.commit()
         
         from webapp.main import socketio
-
-        socketio.emit(
-            'message_sent',
-            {'receiver_id': receiver_id, 'text': message, 'own': True},
-            room=f"user_{sender_id}"
-        )
+        
+        
+        # socketio.emit(
+        #     'message_sent',
+        #     {'receiver_id': receiver_id, 'text': message, 'own': True},
+        #     room=f"user_{sender_id}"
+        # )
         
 
         # Notify receiver
         socketio.emit(
             'message_sent',
-            {'sender_id': sender_id, 'text': message, 'own': False},
+            {'sender_id': sender_id, 'text': message, 'own': False, 'sender_name': sender_name},
             room=f"user_{receiver_id}"
         )
     

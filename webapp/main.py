@@ -106,11 +106,12 @@ def chat_page():
         if 'message-submit' in request.form:
             
             print(request.form.get("receiver"))
+            print("sender", request.form.get("sender"))
             
             receiver_id = User.query.filter_by(username=request.form.get("receiver")).first().id
             message = request.form.get("message")
             if message:
-                Message_addMessage(receiver_id, current_user.id, message)
+                Message_addMessage(receiver_id, current_user.id, message, request.form.get("sender"))
                 return jsonify({
                     'success': True,
                     'message': 'Message sent successfully!'
