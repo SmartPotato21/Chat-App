@@ -2,4 +2,4 @@ flask
 flask_login
 bcrypt
 flask_sqlalchemy
-flas_socketio
+flask_socketio
