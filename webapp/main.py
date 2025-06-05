@@ -149,13 +149,15 @@ def chat_page():
                             'username': friend.username
                         }
                     })
-            else:
-                if friend_username == current_user.username:
+            elif friend_username == current_user.username:                
+                socketio.emit(
+                    'add-friend-error',
+                    {'error': "Cant add yourself as a friend!"}
+                )
+                return jsonify(success=False, error='Something went wrong')
+
+                
                     
-                    return jsonify({
-                        'success': False,
-                        'message': 'You cannot add yourself as a friend.'
-                    })
            
     
 

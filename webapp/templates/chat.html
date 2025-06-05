@@ -8,7 +8,14 @@
     
 </head>
 <body>
+    
+
     <div class="chat-container">
+
+        <div class= "top-bar">
+            <button class="mail-button">✉ </button>
+        </div>
+
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- Friends Section -->
@@ -119,6 +126,7 @@
         <div class="popup-input">
             <input type="text" id="friendUsername" placeholder="Enter friend's username" required>
             <button type="button" onclick="addFriend()">Add Friend</button>
+            <div id="error-message"></div>
             <div id="statusMessage"></div>
         </div>
     </div>
@@ -166,27 +174,30 @@
             formData.append('add-friend', 'true');
             formData.append('friend-username', friendUsername);
 
+
             fetch(window.location.href, {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     if (data.friend) {
                         //addFriendToList(data.friend);
                     }
-                    togglePopup(); // Close popup on success
-                } else {
-                }
+                    //togglePopup(); // Close popup on success
+                } 
             })
             .catch(error => {
                 console.error('Error:', error);
-                 togglePopup();
+                 //togglePopup();
             });
 
             // Clear the input
-            document.getElementById('friendUsername').value = '';
+            //document.getElementById('friendUsername').value = '';
             // Close the popup
         }
     
@@ -225,6 +236,11 @@
     });
     socket.on("disconnect", () => {
         console.log(socket.id); // undefined
+    });
+    socket.on("add-friend-error", function(data)  {
+        console.log(data.error);
+        const error = data.error;
+        document.getElementById("friend-add-error") = error;
     });
 
     function addFriendToList(friend) {
