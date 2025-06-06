@@ -87,6 +87,7 @@ def login_page():
     return render_template('login.html',show = active_tab)
 
 
+# Handle chat page logic, including friend list, message sending, and adding friends
 @app.route("/chat",methods = ['GET','POST'])
 @login_required
 def chat_page():
@@ -94,23 +95,23 @@ def chat_page():
     if not current_user.is_authenticated:
         return redirect('/login')
     
+    # Load current user's friends and requests
     friend_list, request_list = load_friends()
-    
     current_chat = None
-    
 
-
+    # Handle POST requests for logout, sending messages, and adding friends
     if request.method == 'POST':
+        # Handle logout
         if 'logout_select' in request.form:
             return redirect('/logout')
+        # Handle sending a message
         if 'message-submit' in request.form:
-            
             print(request.form.get("receiver"))
             print("sender", request.form.get("sender"))
-            
             receiver_id = User.query.filter_by(username=request.form.get("receiver")).first().id
             message = request.form.get("message")
             if message:
+                # Add message to database
                 Message_addMessage(receiver_id, current_user.id, message, request.form.get("sender"))
                 return jsonify({
                     'success': True,
@@ -121,6 +122,7 @@ def chat_page():
                     'success': False,
                     'message': 'Message cannot be empty.'
                 })
+        # Handle adding a friend
         if 'add-friend' in request.form:
             friend_username = request.form.get("friend-username")
             if friend_username and friend_username != current_user.username:
@@ -138,9 +140,8 @@ def chat_page():
                             'message': 'You are already friends with this user.'
                         })
                     
+                    # Add new friend relationship
                     Friends_addFriend(current_user.id, friend.id)
-                    
-                    # Return success response with friend data
                     return jsonify({
                         'success': True,
                         'message': 'Friend added successfully!',
@@ -150,17 +151,13 @@ def chat_page():
                         }
                     })
             elif friend_username == current_user.username:                
+                # Prevent adding yourself as a friend
                 socketio.emit(
                     'add-friend-error',
                     {'error': "Cant add yourself as a friend!"}
                 )
                 return jsonify(success=False, error='Something went wrong')
-
-                
-                    
-           
-    
-
+    # Render chat page with user info and messages
     return render_template('chat.html', username = current_user.username, friend_list= friend_list, messages=getMessages())
 
 

@@ -5,23 +5,23 @@ from webapp.db import db
 from flask_login import UserMixin, current_user
 
 
-class User(UserMixin,db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-    password = db.Column(db.String, unique=False)
+# User model for authentication and user data
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)  # Unique user ID
+    username = db.Column(db.String, unique=True)  # Username (must be unique)
+    password = db.Column(db.String, unique=False) # User's password (should be hashed in production)
 
-    
+# Friend model to represent friend relationships and requests
 class Friend(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer)
-    reciever_id = db.Column(db.Integer)
-    status = db.Column(db.String, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)      # Unique ID for the friend relationship
+    sender_id = db.Column(db.Integer)                 # User ID of the sender
+    reciever_id = db.Column(db.Integer)               # User ID of the receiver
+    status = db.Column(db.String, nullable=False)     # Status of the friendship (e.g., 'pending', 'accepted')
 
-    
-
+# Message model for storing chat messages
 class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer)
-    receiver_id = db.Column(db.Integer)
-    text = db.Column(db.String(32), nullable=False)
-    #chat_id = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)      # Unique message ID
+    sender_id = db.Column(db.Integer)                 # User ID of the sender
+    receiver_id = db.Column(db.Integer)               # User ID of the receiver
+    text = db.Column(db.String(32), nullable=False)   # Message text (max 32 characters)
+    #chat_id = db.Column(db.Integer)                  # (Optional) Chat ID for group chats or threads

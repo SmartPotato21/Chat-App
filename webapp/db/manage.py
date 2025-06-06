@@ -33,7 +33,7 @@ def User_remove(username):
         db.session.commit()
 
 
-def Message_dropAll():
+def Message_dropAll():      
     with app.app_context():
         # Drop the Message table from the database
         Message.__table__.drop(db.engine)

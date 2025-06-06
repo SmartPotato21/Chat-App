@@ -49,8 +49,8 @@
         
             
             <!-- Profile Section -->
-            <div class="profile-section">
-                <h3 class="section-title">PROFILE</h3>
+<button class="profile-card-slide" onclick="toggleProfile()">PROFILE</button>            <div class="profile-section">
+                
                 <div class="profile-card">
                     <div class="profile-avatar">PFP</div>
                     <div class="profile-name">{{ username }}</div>
@@ -162,6 +162,13 @@
     socket.on('connect', () => {
         console.log('Connected to the server');
     });
+
+    function toggleProfile() {
+        const profilecard = document.querySelector('.profile-card');
+        if (!profilecard) return;
+        profilecard.style.display = (profilecard.style.display === 'none' || profilecard.style.display === '') ? 'flex' : 'none';
+    }
+
     function addFriend() {
             const friendUsername = document.getElementById('friendUsername').value.trim();
             
