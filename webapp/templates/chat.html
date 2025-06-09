@@ -13,7 +13,18 @@
     <div class="chat-container">
 
         <div class= "top-bar">
-            <button class="mail-button">✉ </button>
+            <button class="mail-button" onclick="togglePopup('maillist')">✉ </button>
+            <span class="mail-count" data-initial-count="{{ mail_list|length }}" 
+                style="display: {% if mail_list|length > 0 %}inline{% else %}none{% endif %};">
+                {{ mail_list|length }}
+            </span>
+            <div class="mail-list" id="maillist">
+                {% for mail in mail_list %}
+                    <button class="mail-item" onclick="openFriendRequestPopup('{{ mail.sender_username }}', this)">Friend request from: {{ mail.sender_username }}</button>
+                {% endfor %}
+            </div>
+            
+
         </div>
 
         <!-- Sidebar -->
@@ -39,7 +50,7 @@
             </div>
             
             <div class="friend-add-section">
-                <button class="profile-btn primary" type="submit" onclick="togglePopup()">Add Friend</button>
+                <button class="profile-btn primary" type="submit" onclick="togglePopup('popup')">Add Friend</button>
                 
                 
             </div>
@@ -131,18 +142,19 @@
         </div>
     </div>
 
-<!--        <div class="friend-request-popup">
-            <h2>Friend Request</h2>
-            <div class="popup-buttons">
+    <div class="friend-request-popup">
+        <h2>Friend Request</h2>
+        <h3>From Smartpotato86<h3>
+        <div class="popup-buttons">
 
-                <button class="accept-btn" >Accept</button>
-                <button class="block-btn" >Block</button>
-            </div>
+            <button class="accept-btn" onclick="acceptFriendRequestPopup()">Accept</button>
+            <button class="block-btn" >Decline</button>
         </div>
+    </div> 
   
 
     </div>
-     //-->
+     
 </div>
 
     
@@ -162,6 +174,82 @@
     socket.on('connect', () => {
         console.log('Connected to the server');
     });
+
+    function openFriendRequestPopup(sender_name, mail_item) {
+        const popup = document.querySelector('.friend-request-popup');
+        document.querySelector('.friend-request-popup h3').textContent = `From ` + sender_name;
+        
+        if (popup) {
+            mail_item.style.display = 'none';
+            popup.style.display = 'block';
+            const mailCount = document.querySelector('.mail-count');
+            
+            if (mailCount) {
+                console.log("Updating mail count");
+                if( parseInt(mailCount.textContent))
+                {
+                    mailCount.textContent = parseInt(mailCount.textContent) - 1;
+                    if (parseInt(mailCount.textContent) <= 0) {
+                        mailCount.style.display = 'none';
+                    }
+                }
+                
+            } else {
+                
+            }
+        } else {
+            console.error('Friend request popup not found in the DOM');
+        }
+    }
+
+    function acceptFriendRequestPopup() 
+    {
+        const popup = document.querySelector('.friend-request-popup');
+        if (popup) {
+            popup.style.display = 'none';
+            
+            friendUsername = document.querySelector('.friend-request-popup h3').textContent.replace('From ', '').trim();
+            console.log("Accepting friend request from:", friendUsername);
+            if (!friendUsername) {
+                return;
+            }
+
+            // Use fetch to submit form data without page refresh
+            const formData = new FormData();
+            formData.append('add-friend', 'true');
+            formData.append('friend-username', friendUsername);
+
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (data.friend) {
+                        //addFriendToList(data.friend);
+                    }
+                    //togglePopup('popup'); // Close popup on success
+                } 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                 //togglePopup();
+            });
+            
+            
+
+        } else {
+            console.error('Friend request popup not found in the DOM');
+        }
+    }
+        
+    
+
 
     function toggleProfile() {
         const profilecard = document.querySelector('.profile-card');
@@ -195,7 +283,7 @@
                     if (data.friend) {
                         //addFriendToList(data.friend);
                     }
-                    //togglePopup(); // Close popup on success
+                    togglePopup('popup'); // Close popup on success
                 } 
             })
             .catch(error => {
@@ -207,6 +295,47 @@
             //document.getElementById('friendUsername').value = '';
             // Close the popup
         }
+
+    socket.on('mail_sent', function(data) {
+        console.log("Mail sent handler called with:", data);
+        console.log("Adding mail item for:", data.sender_username);
+
+        const mailList = document.getElementById('maillist');
+        if (!mailList) {
+            console.error('Mail list not found in the DOM');
+            return;
+        }
+
+
+
+        // Create a new mail item
+        const mailItem = document.createElement('button');
+        mailItem.className = 'mail-item';
+        mailItem.textContent = `Friend request from: ${data.sender_username}`;
+        mailItem.onclick = function() {
+            openFriendRequestPopup(data.sender_username, mailItem);
+        };
+
+        // Append the new mail item to the mail list
+        mailList.appendChild(mailItem);
+
+        // Update the mail count
+        const mailCount = document.querySelector('.mail-count');
+        mailCount.style.display = 'inline';
+        if (mailCount) {
+            console.log("Updating mail count");
+            if( parseInt(mailCount.textContent))
+            {
+                mailCount.textContent = parseInt(mailCount.textContent) + 1;
+            }
+            else
+            {
+                mailCount.textContent = 1;
+            }
+        } else {
+            
+        }
+    });
     
     socket.on('message_sent', function(data) {
         console.log("Friend sent message:", data.text);
@@ -276,8 +405,10 @@
     }
 
     // Popup logic
-    let popup = document.getElementById('popup');
-    function togglePopup() {
+    function togglePopup(element) 
+    {
+        let popup = document.getElementById(element);
+
         if (!popup) return;
 
         popup.style.display = popup.style.display === 'block' ? 'none' : 'block';

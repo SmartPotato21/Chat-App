@@ -98,6 +98,8 @@ def chat_page():
     # Load current user's friends and requests
     friend_list, request_list = load_friends()
     current_chat = None
+    mail_list = get_mail()
+    
 
     # Handle POST requests for logout, sending messages, and adding friends
     if request.method == 'POST':
@@ -142,6 +144,10 @@ def chat_page():
                     
                     # Add new friend relationship
                     Friends_addFriend(current_user.id, friend.id)
+                    
+                    
+                    
+                    
                     return jsonify({
                         'success': True,
                         'message': 'Friend added successfully!',
@@ -158,7 +164,7 @@ def chat_page():
                 )
                 return jsonify(success=False, error='Something went wrong')
     # Render chat page with user info and messages
-    return render_template('chat.html', username = current_user.username, friend_list= friend_list, messages=getMessages())
+    return render_template('chat.html', username = current_user.username, friend_list= friend_list, messages=getMessages(), mail_list=mail_list)
 
 
 @login_manager.user_loader
@@ -223,6 +229,17 @@ def getMessages():
     messages = Message.query.filter_by(sender_id=current_user.id).all()
     return messages
 
+
+def get_mail():
+    if not current_user.is_authenticated:
+        return []
+    
+    requests = Friend.query.filter_by(reciever_id=current_user.id,status="pending").all()
+    
+    for request in requests:
+        request.sender_username = User.query.get(request.sender_id).username
+        request.sender_id = request.sender_id
+    return requests
 
 
 @app.route('/get_messages', methods=['POST'])

@@ -171,79 +171,112 @@
             color: #e2e8f0;
             font-weight: 700;
         }
+
+        .error-message {
+            color: #feb2b2;
+            font-size: 14px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="tab-container">
-            <form method="post">
-                <button class="{{ 'tab active' if show == '1' else 'tab'  }}" name="login_page_select" type="submit">Login</button>
-                <button class= "{{ 'tab active' if show == '2' else 'tab'  }}" name="register_page_select" type="submit">Sign Up</button>
-            </form>
+            <button class="tab active" onclick="showLogin()">Login</button>
+            <button class="tab" onclick="showSignup()">Sign Up</button>
         </div>
         
         <div class="form-container">
             <div id="message" class="message"></div>
             
-
             <!-- Login Form -->
-            {% if show == '1' %}
-                <div id="loginForm" class="form active">
-                    <h2>Welcome Back</h2>
-                    <form method="post">
-                        <div class="form-group">
-                            <label for="loginUsername">Username</label>
-                            <input type="text" id="loginUsername" name="username" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="loginPassword">Password</label>
-                            <input type="password" id="loginPassword" name="password" required>
-                        </div>
-                        <button type="submit" name= "login_submit" class="btn">Login</button>
-                    </form>
-                    <div class="forgot-password">
-                        <a href="#" onclick="showMessage('Password reset functionality would be implemented here.', 'success')">Forgot Password?</a>
+            <div id="loginForm" class="form active">
+                <h2>Welcome Back</h2>
+                <form method="post">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" name="username" required>
                     </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <button type="submit" name="login_submit" class="btn">Login</button>
+                </form>
+                <div class="forgot-password">
+                    <a href="#" onclick="showMessage('Password reset functionality would be implemented here.', 'success')">Forgot Password?</a>
                 </div>
-            {% elif show == '2' %}
-            <!-- Signup Form -->
-                <div id="signupForm" class="form active">
-                    <h2>Create Account</h2>
-                        <form method="post">
-                            <div class="form-group">
-                                <label for="signupUsername">Username</label>
-                                <input type="text" id="signupUsername" name="username" required minlength="3">
-                            </div>
-                            <div class="form-group">
-                                <label for="signupPassword">Password</label>
-                                <input type="password" id="signupPassword" name="password" required minlength="6">
-                            </div>
-                            <div class="form-group">
-                                <label for="confirmPassword">Confirm Password</label>
-                                <input type="password" id="confirmPassword" name="confirm-password" required minlength="6">
-                            </div>
-                            <span id="error" style="color: red;"></span><br>
-                                <button type="submit" class="btn" name= "register_submit" onclick="checkpasswords()">Sign Up</button>
-                        </form>    
+            </div>
 
-                </div>
-            {% endif %}
+            <!-- Signup Form -->
+            <div id="signupForm" class="form">
+                <h2>Create Account</h2>
+                <form method="post" onsubmit="return validatePasswords(event)">
+                    <div class="form-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" name="username" required minlength="3">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" name="password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirm-password" required minlength="6">
+                    </div>
+                    <div id="error" class="error-message"></div>
+                    <button type="submit" class="btn" name="register_submit">Sign Up</button>
+                </form>    
+            </div>
         </div>
     </div>
+
     <script>
-  
-        document.getElementById('signupForm').addEventListener('submit', function(event) {
+        function showLogin() {
+            document.getElementById('loginForm').classList.add('active');
+            document.getElementById('signupForm').classList.remove('active');
+            
+            // Update tab appearance
+            const tabs = document.querySelectorAll('.tab');
+            tabs[0].classList.add('active');
+            tabs[1].classList.remove('active');
+        }
 
-            let password1 = document.getElementById('signupPassword').value;
-            let password2 = document.getElementById('confirmPassword').value;
-            let error = document.getElementById('error');
-            if(password1 !== password2)
-            {
+        function showSignup() {
+            document.getElementById('signupForm').classList.add('active');
+            document.getElementById('loginForm').classList.remove('active');
+            
+            // Update tab appearance
+            const tabs = document.querySelectorAll('.tab');
+            tabs[1].classList.add('active');
+            tabs[0].classList.remove('active');
+        }
+
+        function validatePasswords(event) {
+            const password1 = document.getElementById('signupPassword').value;
+            const password2 = document.getElementById('confirmPassword').value;
+            const errorElement = document.getElementById('error');
+            
+            if (password1 !== password2) {
                 event.preventDefault();
-                error.textContent = "Passwords dont match";
+                errorElement.textContent = "Passwords don't match";
+                return false;
+            } else {
+                errorElement.textContent = "";
+                return true;
             }
-        });
-    </script>    
+        }
 
+        function showMessage(text, type) {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = text;
+            messageElement.className = `message ${type}`;
+            messageElement.style.display = 'block';
+            
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

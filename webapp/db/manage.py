@@ -99,6 +99,16 @@ def Friends_addFriend(sender_id, reciever_id, status="pending"):
             new_friend = Friend(sender_id=sender_id, reciever_id=reciever_id, status=status)
             db.session.add(new_friend)
             db.session.commit()
+            sender_username = User.query.get(sender_id).username
+            print(f"Added friend request from {sender_username} to {reciever_id}")
+            
+            from webapp.main import socketio
+
+            socketio.emit(
+                    'mail_sent',
+                    {'sender_username': sender_username },
+                    room=f"user_{reciever_id}"
+                )
             
 def Friend_dropAll(password):
     if password == "q1q1q1":

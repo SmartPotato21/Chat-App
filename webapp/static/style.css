@@ -68,8 +68,8 @@
 }
 
 .friend-request-popup {
-    width: 400px;
-    height: 300px;
+    width: 300px;
+    height: 200px;
     background: #2d3748;
     border: 3px solid #667eea;
     border-radius: 15px;  
@@ -82,7 +82,7 @@
     color: #e2e8f0;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
     z-index: 9999;
-    display: hidden; /* Initially hidden */
+    display: none; /* Initially hidden */
 }
 
 .friend-request-popup h2 {
@@ -225,8 +225,23 @@ body {
     font-weight: 600;
     cursor: pointer;
     background: #2d3748;
-    
+
     transition: all 0.3s ease;
+}
+
+.mail-count {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
 }
 
 
@@ -237,6 +252,53 @@ body {
     transform: translateY(-2px); 
 
 }
+
+.mail-list {
+    width: 35%;
+    height: 75%;
+    background: #1a202c; /* Darker for better contrast */
+    border: 2px solid #4c51bf; /* Slightly deeper violet */
+    border-radius: 16px;
+    position: absolute;
+    top: 43%;
+    left: 82%;
+    transform: translate(-50%, -50%);
+    padding: 20px 30px 60px; /* Top padding added here */
+    text-align: left;
+    color: #f7fafc; /* Brighter for contrast */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: none;
+    overflow: auto;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.mail-item {
+    width: 100%;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    background: linear-gradient(135deg, #5a67d8, #805ad5); /* More contrast */
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #edf2f7;
+}
+
+.mail-item:hover {
+    transform: translateX(5px);
+    background: linear-gradient(135deg, #6b46c1, #9f7aea); /* Lighter on hover */
+}
+
+
+
 
 .profile-section {
     flex: 1;
